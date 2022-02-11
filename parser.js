@@ -11,7 +11,7 @@ class InvalidStringError extends Error {
 }
 
 class PartialStringError extends Error {
-    constructor(message, partialResult){
+    constructor(message, partialResult) {
         super(message);
         this.partialResult = partialResult;
     }
@@ -20,57 +20,83 @@ class PartialStringError extends Error {
 
 
 
-class Parse{
-    
+class Parse {
+
     /**
      * * Given a string, it returns an array of floats
      * @param string - The string to be parsed.
      * @returns The array of float numbers
      */
 
-static parserAll(csv){
+    static parserAll(csv) {
 
-    const stringwithoutblanckspace = Parse.removeBlanckSpace(csv)
+        const stringwithoutblanckspace = Parse.removeBlanckSpace(csv)
 
-    const cleanString= Parse.replaceCommaAtDot(stringwithoutblanckspace);
+        const cleanString = Parse.replaceCommaAtDot(stringwithoutblanckspace);
 
-    const stringNewLine =Parse.splitForNewLine(cleanString);
+        const stringNewLine = Parse.splitForNewLine(cleanString);
 
-    let array2 = [];
+        let array2 = [];
 
-    for (const line of stringNewLine) {
-       const lineArray = Parse.parseCSVLine(line)
-        array2 = array2.concat(lineArray);
+        for (const line of stringNewLine) {
+            const lineArray = Parse.parseCSVLine(line)
+            array2 = array2.concat(lineArray);
+
+        }
+        return array2;
 
     }
-    return array2;
+    static parserToMatrix(csv) {
 
-}
+        const stringwithoutblanckspace = Parse.removeBlanckSpace(csv)
 
-    static parseCSVLine(line){
-        
+        const cleanString = Parse.replaceCommaAtDot(stringwithoutblanckspace);
+
+        const stringNewLine = Parse.splitForNewLine(cleanString);
+
+        let array2 = [];
+
+        for (const line of stringNewLine) {
+            const lineArray = Parse.parseCSVLine(line)
+            array2.push(lineArray);
+
+        }
+        return array2;
+
+    }
+
+
+    static parseCSV(csv, outputType)
+
+    static parseCSVLine(line) {
+
         const arrayOfStrings = Parse.splitForSemicolon(line);
-       
+
         const array6 = [];
 
-      for (const word of arrayOfStrings) {
-          const value = Parse.parseWord(word)
+        for (const word of arrayOfStrings) {
+            const value = Parse.parseWord(word)
+            if (outputType === "-a") {
+                array6 = array6.concat(lineArray);
+            } else {
+                array6.push(value);
 
-        array6.push(value);
+            }
 
-      }
+        }
 
-        
+
+
         return array6; //.reduce((p,c)=> p + c);
 
     }
 
-    static parseWord(word){
+    static parseWord(word) {
         if (!isNaN(word)) {
             return parseFloat(word);
         }
 
-        if (word.toLoweCase() === 'true' || word.toLoweCase() === 'false' ) {
+        if (word.toLoweCase() === 'true' || word.toLoweCase() === 'false') {
             return word.toLoweCase() === 'true';
         }
 
@@ -83,12 +109,12 @@ static parserAll(csv){
 
 
 
-   /**
-    * Split a string into an array of strings using a semicolon as the delimiter
-    * @param string - The string to be split.
-    * @returns an array of strings.
-    */
-   
+    /**
+     * Split a string into an array of strings using a semicolon as the delimiter
+     * @param string - The string to be split.
+     * @returns an array of strings.
+     */
+
 
 
 
@@ -105,19 +131,19 @@ static parserAll(csv){
         return replaced;
     }
 
-    static parseArrayToFloat(array){
-        let tempArray=[];
+    static parseArrayToFloat(array) {
+        let tempArray = [];
         for (let i = 0; i < array.length; i++) {
             const string = array[i];
-            const parsed= parseFloat(string);
+            const parsed = parseFloat(string);
             if (!isNaN(parsed)) {
                 tempArray.push(parsed);
             }
-            
+
         }
         return tempArray;
     }
-    static splitForNewLine(string){
+    static splitForNewLine(string) {
         const splittedStringOnNewLine = string.split(/\n?\r/);
         return splittedStringOnNewLine;
     }
@@ -126,8 +152,8 @@ static parserAll(csv){
         const splittedString = array.split(";");
         return splittedString;
     }
-   
+
 }
 
 
-module.exports = {Parse};
+module.exports = { Parse };
