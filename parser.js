@@ -28,40 +28,58 @@ class Parse{
      * @returns The array of float numbers
      */
 
-static parseWithSplit(string){
-    const stringNewLine =Parse.splitForNewLine(string);
+static parserAll(csv){
+
+    const stringwithoutblanckspace = Parse.removeBlanckSpace(csv)
+
+    const cleanString= Parse.replaceCommaAtDot(stringwithoutblanckspace);
+
+    const stringNewLine =Parse.splitForNewLine(cleanString);
+
+    let array2 = [];
+
+    for (const line of stringNewLine) {
+       const lineArray = Parse.parseCSVLine(line)
+        array2 = array2.concat(lineArray);
+
+    }
+    return array2;
+
 }
 
-    static parseCSVLine(string){
-        if (string.length === 0 ) {
-            throw new EmptyStringError("Stringa inserita vuota");
-        }
+    static parseCSVLine(line){
         
-        const strinWithoutComma = Parse.replaceCommaAtDot(string);
-        
-        const stringWithoutSpaces = Parse.removeBlanckSpace(strinWithoutComma);
-        
-        const stringNewLine =Parse.splitForNewLine(stringWithoutSpaces)
-
-        const arrayOfStrings = Parse.splitForSemicolon(stringNewLine);
+        const arrayOfStrings = Parse.splitForSemicolon(line);
        
-        const arrayOfFloat = Parse.parseArrayToFloat(arrayOfStrings);
+        const array6 = [];
 
-        if (arrayOfFloat === 0) {
-            throw new InvalidStringError("stringa completamente Invalida");
-        }
-        if (arrayOfFloat.length < arrayOfStrings.length) {
-            throw new PartialStringError("stringa parzialmente invalida, la parte della stringa valida " + arrayOfFloat); //.reduce((p,c)=> p + c));
-           
-        }
+      for (const word of arrayOfStrings) {
+          const value = Parse.parseWord(word)
 
+        array6.push(value);
+
+      }
 
         
-        return arrayOfFloat; //.reduce((p,c)=> p + c);
+        return array6; //.reduce((p,c)=> p + c);
 
     }
 
+    static parseWord(word){
+        if (!isNaN(word)) {
+            return parseFloat(word);
+        }
 
+        if (word.toLoweCase() === 'true' || word.toLoweCase() === 'false' ) {
+            return word.toLoweCase() === 'true';
+        }
+
+        if ((new Date(word) !== "Invalid Date") && !isNaN(new Date(word))) {
+            return new Date(word);
+        }
+
+        return word
+    }
 
 
 
@@ -100,17 +118,16 @@ static parseWithSplit(string){
         return tempArray;
     }
     static splitForNewLine(string){
-        const splittedStringOnNewLine = string.split("\n");
+        const splittedStringOnNewLine = string.split(/\n?\r/);
         return splittedStringOnNewLine;
     }
 
     static splitForSemicolon(array) {
-        const arraytoString = JSON.stringify(array);
-        const splittedString = arraytoString.split(";");
+        const splittedString = array.split(";");
         return splittedString;
     }
    
 }
 
 
-module.exports = {Parse, InvalidStringError, EmptyStringError, PartialStringError};
+module.exports = {Parse};
